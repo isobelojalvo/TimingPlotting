@@ -38,10 +38,11 @@ void applyPadStyle(TPad* pad1){
   pad1->SetGrid(10,10);
 }
 
-void plotEfficiency(TString variable, TString Date, 
+void plot3Efficiency(TString variable, TString Date, 
 		    TString fileA, TString treeA, TString numeratorA, TString denominatorA, TString textA,
 		    TString fileB, TString treeB, TString numeratorB, TString denominatorB, TString textB,
-		    TString outfilename, TString xaxis, TString titleText, int bins, float low, float high){
+		    TString fileC, TString treeC, TString numeratorC, TString denominatorC, TString textC,
+		     TString outfilename, TString xaxis, TString titleText, int bins, float low, float high){
   //int bins = 20;
   //int low  = 0;
   //int high = 120;
@@ -80,6 +81,13 @@ void plotEfficiency(TString variable, TString Date,
     exit(0);
   }
 
+  TFile *tauFileC    = new TFile(fileC);
+
+  if(!tauFileC->IsOpen()||tauFileC==0){
+    std::cout<<"ERROR FILE "<< fileC<<" NOT FOUND; EXITING"<<std::endl;
+    exit(0);
+  }
+
   TCanvas *Tcan= new TCanvas("Tcan","",100,20,600,600); Tcan->cd();  Tcan->SetFillColor(0);
   TPad* pad1 = new TPad("pad1","The pad",0,0,0.98,0.98);
 
@@ -97,6 +105,12 @@ void plotEfficiency(TString variable, TString Date,
   TTree* tauTreeB = (TTree*)tauFileB->Get(treeB);
   if(tauTreeB == 0){
     std::cout<<"ERROR Tau Tree is "<< tauTreeB<<" NOT FOUND; EXITING"<<std::endl;
+    exit(0);
+  }
+
+  TTree* tauTreeC = (TTree*)tauFileC->Get(treeC);
+  if(tauTreeC == 0){
+    std::cout<<"ERROR Tau Tree is "<< tauTreeC<<" NOT FOUND; EXITING"<<std::endl;
     exit(0);
   }
 
@@ -121,17 +135,19 @@ void plotEfficiency(TString variable, TString Date,
   NumB = new TH1F("NumB","NumB",bins,low,high);
   tauTreeB->Draw(variable+">>+NumB",numeratorB);
   NumB->Divide(DenomB);
-  /*
+
   TH1F* DenomC;
   DenomC = new TH1F("DenomC","DenomC",bins,low,high);
   DenomC->Sumw2();
-  tauTreeC->Draw(variableC+">>+DenomC",denominatorC);
+  tauTreeC->Draw(variable+">>+DenomC",denominatorC);
 
   TH1F* NumC;
   NumC = new TH1F("NumC","NumC",bins,low,high);
-  tauTreeC->Draw(variableC+">>+NumC",numeratorC);
+  tauTreeC->Draw(variable+">>+NumC",numeratorC);
   NumC->Divide(DenomC);
-*/
+
+  NumC->SetMarkerStyle(markerstyle);
+  NumC->SetMarkerColor(color1);
 
   NumB->SetMarkerStyle(markerstyle);
   NumB->SetMarkerColor(color2);
@@ -147,6 +163,7 @@ void plotEfficiency(TString variable, TString Date,
   NumA->Draw("P");
   NumA->Draw("P same");
   NumB->Draw("P same");
+  NumC->Draw("P same");
 
   NumA->SetFillStyle(1001);
   NumA->SetLineWidth((short)1.5);
@@ -163,6 +180,7 @@ void plotEfficiency(TString variable, TString Date,
   //leg->AddEntry(NumA,"Nominal PF Charged Isolation","PL");
   leg->AddEntry(NumA,textA,"PL");
   leg->AddEntry(NumB,textB,"PL");
+  leg->AddEntry(NumC,textC,"PL");
   leg->Draw();
 
 

@@ -27,14 +27,15 @@ void plotTiming(){
   TH1F *basehist = new TH1F("basehist","",100,0,2.5);
 
   TChain pu200_gaus("PFChargedBased/Ntuple");  
-  pu200_gaus.Add("timing-Jan26-2/ZTT-RelVal-200.root");
+  //pu200_gaus.Add("timing-Jan26-2/ZTT-RelVal-200.root");
+  pu200_gaus.Add("timing-May13/ZTT-RelVal-200.root");
 
   TChain pu0_gaus("PFChargedBased/Ntuple");  
   pu0_gaus.Add("timing-Jan26-2/ZTT-RelVal-0.root");
 
   basehist->SetStats(false);
   TString iso200("0.050"), iso140("0.050");
-  TString date = "2_2_17";
+  TString date = "5_3_17";
 
 
   double zs_200[4]   = {0.,0.,0.,0.};
@@ -82,11 +83,19 @@ void plotTiming(){
   TGraphAsymmErrors *pu200_eff_timingCutT2 = plotTimeReturnTGraphAsymmErrors(pu200_gaus, numeratorT2, denominator);  
 
   /////////////////////////////////////////
-  TString numeratorT1 = numerator + "&& PFChargedT4 <"+isoCut;
-  //TString numeratorT1v0 = numerator + "&& PFChargedT4 <5";
+  TString numeratorT4 = numerator + "&& PFChargedT4 <"+isoCut;
+  //TString numeratorT4v0 = numerator + "&& PFChargedT4 <5";
 
-  TGraphAsymmErrors *pu200_eff_timingCutT1 = plotTimeReturnTGraphAsymmErrors(pu200_gaus, numeratorT1, denominator);  
-  TGraphAsymmErrors *pu0_eff_timingCutT1   = plotTimeReturnTGraphAsymmErrors(pu0_gaus, numeratorT1, denominator);
+  TGraphAsymmErrors *pu200_eff_timingCutT4 = plotTimeReturnTGraphAsymmErrors(pu200_gaus, numeratorT4, denominator);  
+  TGraphAsymmErrors *pu0_eff_timingCutT4   = plotTimeReturnTGraphAsymmErrors(pu0_gaus, numeratorT4, denominator);
+
+  /////////////////////////////////////////
+
+  TString numeratorT6 = numerator + "&& PFChargedT6 <"+isoCut;
+  //TString numeratorT6v0 = numerator + "&& PFChargedT6 <5";
+
+  TGraphAsymmErrors *pu200_eff_timingCutT6 = plotTimeReturnTGraphAsymmErrors(pu200_gaus, numeratorT6, denominator);  
+  TGraphAsymmErrors *pu0_eff_timingCutT6   = plotTimeReturnTGraphAsymmErrors(pu0_gaus, numeratorT6, denominator);
 
   /////////////////////////////////////////
   basehist->GetXaxis()->SetTitle("density (events / mm)");
@@ -96,8 +105,11 @@ void plotTiming(){
   basehist->Draw("");
 
   //setPlotStyleAsymm(                  plot , Int_t  color, Int_t fillStyle,  Int_t MarkerStyle){
-  setPlotStyleAsymm(  pu200_eff_timingCutT1,       color3,            3005,                 23);
-  pu200_eff_timingCutT1->Draw("P Same");
+  setPlotStyleAsymm(  pu200_eff_timingCutT6,       color5,            3005,                 23);
+  pu200_eff_timingCutT6->Draw("P Same");
+
+  setPlotStyleAsymm(  pu200_eff_timingCutT4,       color3,            3005,                 23);
+  pu200_eff_timingCutT4->Draw("P Same");
 
   setPlotStyleAsymm(  pu200_eff_timingCutT2,       color2,            3005,                 23);
   pu200_eff_timingCutT2->Draw("P Same");
@@ -123,7 +135,8 @@ void plotTiming(){
   leg->AddEntry(            pu200_eff,   "PF Charged Isolation Nominal","PL"); 
   leg->AddEntry(pu200_eff_timingCutT2,"2#sigma Interval Tracks","PL");
   leg->AddEntry(pu200_eff_timingCutT3,"3#sigma Interval Tracks","PL");
-  leg->AddEntry(pu200_eff_timingCutT1,"4#sigma Interval Tracks","PL");
+  leg->AddEntry(pu200_eff_timingCutT4,"4#sigma Interval Tracks","PL");
+  leg->AddEntry(pu200_eff_timingCutT6,"6#sigma Interval Tracks","PL");
   leg->Draw();
   
   c1->SaveAs("~/Dropbox/"+date+"/TimingPlots/"+plotName+".pdf");

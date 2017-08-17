@@ -38,10 +38,13 @@ void applyPadStyle(TPad* pad1){
   pad1->SetGrid(10,10);
 }
 
-void plotEfficiency(TString variable, TString Date, 
+void plot5Efficiency(TString variable, TString Date, 
 		    TString fileA, TString treeA, TString numeratorA, TString denominatorA, TString textA,
 		    TString fileB, TString treeB, TString numeratorB, TString denominatorB, TString textB,
-		    TString outfilename, TString xaxis, TString titleText, int bins, float low, float high){
+		    TString fileC, TString treeC, TString numeratorC, TString denominatorC, TString textC,
+		    TString fileD, TString treeD, TString numeratorD, TString denominatorD, TString textD,
+		    TString fileE, TString treeE, TString numeratorE, TString denominatorE, TString textE,
+		     TString outfilename, TString xaxis, TString titleText, int bins, float low, float high){
   //int bins = 20;
   //int low  = 0;
   //int high = 120;
@@ -61,6 +64,8 @@ void plotEfficiency(TString variable, TString Date,
   Color_t color = TColor::GetColor("#283593");//dark blue color1
   Color_t color1 = TColor::GetColor("#F44336");//red color4
   Color_t color2 = TColor::GetColor("#0288D1"); //green blue color2
+  Color_t color3 = TColor::GetColor("#ff9933"); //Orange
+  Color_t color4 = TColor::GetColor("#e6e600"); //Yellow
   //TString outFileName = "plotEfficiency-ZTT";
 
   setTDRStyle();
@@ -77,6 +82,27 @@ void plotEfficiency(TString variable, TString Date,
 
   if(!tauFileB->IsOpen()||tauFileB==0){
     std::cout<<"ERROR FILE "<< fileB<<" NOT FOUND; EXITING"<<std::endl;
+    exit(0);
+  }
+
+  TFile *tauFileC    = new TFile(fileC);
+
+  if(!tauFileC->IsOpen()||tauFileC==0){
+    std::cout<<"ERROR FILE "<< fileC<<" NOT FOUND; EXITING"<<std::endl;
+    exit(0);
+  }
+
+  TFile *tauFileD    = new TFile(fileD);
+
+  if(!tauFileD->IsOpen()||tauFileD==0){
+    std::cout<<"ERROR FILE "<< fileD<<" NOT FOUND; EXITING"<<std::endl;
+    exit(0);
+  }
+
+  TFile *tauFileE    = new TFile(fileE);
+
+  if(!tauFileE->IsOpen()||tauFileE==0){
+    std::cout<<"ERROR FILE "<< fileE<<" NOT FOUND; EXITING"<<std::endl;
     exit(0);
   }
 
@@ -97,6 +123,24 @@ void plotEfficiency(TString variable, TString Date,
   TTree* tauTreeB = (TTree*)tauFileB->Get(treeB);
   if(tauTreeB == 0){
     std::cout<<"ERROR Tau Tree is "<< tauTreeB<<" NOT FOUND; EXITING"<<std::endl;
+    exit(0);
+  }
+
+  TTree* tauTreeC = (TTree*)tauFileC->Get(treeC);
+  if(tauTreeC == 0){
+    std::cout<<"ERROR Tau Tree is "<< tauTreeC<<" NOT FOUND; EXITING"<<std::endl;
+    exit(0);
+  }
+
+  TTree* tauTreeD = (TTree*)tauFileD->Get(treeD);
+  if(tauTreeD == 0){
+    std::cout<<"ERROR Tau Tree is "<< tauTreeD<<" NOT FOUND; EXITING"<<std::endl;
+    exit(0);
+  }
+
+  TTree* tauTreeE = (TTree*)tauFileE->Get(treeE);
+  if(tauTreeE == 0){
+    std::cout<<"ERROR Tau Tree is "<< tauTreeE<<" NOT FOUND; EXITING"<<std::endl;
     exit(0);
   }
 
@@ -121,20 +165,49 @@ void plotEfficiency(TString variable, TString Date,
   NumB = new TH1F("NumB","NumB",bins,low,high);
   tauTreeB->Draw(variable+">>+NumB",numeratorB);
   NumB->Divide(DenomB);
-  /*
-  TH1F* DenomC;
-  DenomC = new TH1F("DenomC","DenomC",bins,low,high);
-  DenomC->Sumw2();
-  tauTreeC->Draw(variableC+">>+DenomC",denominatorC);
-
-  TH1F* NumC;
-  NumC = new TH1F("NumC","NumC",bins,low,high);
-  tauTreeC->Draw(variableC+">>+NumC",numeratorC);
-  NumC->Divide(DenomC);
-*/
 
   NumB->SetMarkerStyle(markerstyle);
   NumB->SetMarkerColor(color2);
+
+  TH1F* DenomC;
+  DenomC = new TH1F("DenomC","DenomC",bins,low,high);
+  DenomC->Sumw2();
+  tauTreeC->Draw(variable+">>+DenomC",denominatorC);
+
+  TH1F* NumC;
+  NumC = new TH1F("NumC","NumC",bins,low,high);
+  tauTreeC->Draw(variable+">>+NumC",numeratorC);
+  NumC->Divide(DenomC);
+
+  NumC->SetMarkerStyle(markerstyle);
+  NumC->SetMarkerColor(color1);
+
+  TH1F* DenomD;
+  DenomD = new TH1F("DenomD","DenomD",bins,low,high);
+  DenomD->Sumw2();
+  tauTreeD->Draw(variable+">>+DenomD",denominatorD);
+
+  TH1F* NumD;
+  NumD = new TH1F("NumD","NumD",bins,low,high);
+  tauTreeD->Draw(variable+">>+NumD",numeratorD);
+  NumD->Divide(DenomD);
+
+  NumD->SetMarkerStyle(markerstyle);
+  NumD->SetMarkerColor(color3);
+
+  TH1F* DenomE;
+  DenomE = new TH1F("DenomE","DenomE",bins,low,high);
+  DenomE->Sumw2();
+  tauTreeE->Draw(variable+">>+DenomE",denominatorE);
+
+  TH1F* NumE;
+  NumE = new TH1F("NumE","NumE",bins,low,high);
+  tauTreeE->Draw(variable+">>+NumE",numeratorE);
+  NumE->Divide(DenomE);
+
+  NumE->SetMarkerStyle(markerstyle);
+  NumE->SetMarkerColor(color4);
+
   ////
 
   gStyle->SetErrorX(0.5);
@@ -147,6 +220,9 @@ void plotEfficiency(TString variable, TString Date,
   NumA->Draw("P");
   NumA->Draw("P same");
   NumB->Draw("P same");
+  NumC->Draw("P same");
+  NumD->Draw("P same");
+  NumE->Draw("P same");
 
   NumA->SetFillStyle(1001);
   NumA->SetLineWidth((short)1.5);
@@ -163,10 +239,13 @@ void plotEfficiency(TString variable, TString Date,
   //leg->AddEntry(NumA,"Nominal PF Charged Isolation","PL");
   leg->AddEntry(NumA,textA,"PL");
   leg->AddEntry(NumB,textB,"PL");
+  leg->AddEntry(NumC,textC,"PL");
+  leg->AddEntry(NumD,textD,"PL");
+  leg->AddEntry(NumE,textE,"PL");
   leg->Draw();
 
 
   Tcan->cd();
-  Tcan->SaveAs(Date+"/"+variable+outfilename+"-eff.pdf");
-  Tcan->SaveAs(Date+"/"+variable+outfilename+"-eff.png");
+  Tcan->SaveAs(Date+"/"+variable+outfilename+"-eff5.pdf");
+  Tcan->SaveAs(Date+"/"+variable+outfilename+"-eff5.png");
 }

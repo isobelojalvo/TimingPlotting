@@ -32,7 +32,7 @@ void plotTimingFakes(){
   TH1F *basehist = new TH1F("basehist","",100,0,5);
   basehist->SetStats(false);
   TString iso200("0.050"), iso140("0.050");
-  TString date = "2_2_17";
+  TString date = "5_3_17";
 
   //TString numerator = "jetPt > 22 && jetPt < 400 && genJetMatch > 0 &&  dmf==10 && good3ProngT3 > 0  && abs(jetEta) <2.1 && abs(tauEta)<2.1 && tauPt> 30 && vtxIndex==0";
   //TString denominator = "jetPt > 22 && jetPt < 400 && genJetMatch > 0 && abs(jetEta) <2.1 && vtxIndex==0";
@@ -87,12 +87,15 @@ void plotTimingFakes(){
   /////////////////////////////////////////
 
   TString numeratorT4 = numerator + "&& PFChargedT4 <"+isoCut;
-  //plotDistributions(pu200_gaus,numeratorT4,"jetPt-T4");
   TGraphAsymmErrors *pu200_eff_timingCutT4 = plotTimeReturnTGraphAsymmErrors(pu200_gaus, numeratorT4,denominator);
 
-  //TGraphAsymmErrors *pu0_eff_timingCutT4   = plotTimeReturnTGraphAsymmErrors(pu0_gaus,   numeratorT4,denominator);
+  /////////////////////////////////////////
+
+  TString numeratorT6 = numerator + "&& PFChargedT6 <"+isoCut;
+  TGraphAsymmErrors *pu200_eff_timingCutT6 = plotTimeReturnTGraphAsymmErrors(pu200_gaus, numeratorT6,denominator);
 
   /////////////////////////////////////////
+
   basehist->GetXaxis()->SetTitle("density (events / mm)");
   basehist->GetYaxis()->SetTitle("Jet Fake Probability ");  
   basehist->GetYaxis()->SetRangeUser(0.0,0.05);
@@ -100,6 +103,10 @@ void plotTimingFakes(){
   basehist->GetYaxis()->SetLabelSize(0.035);
 
   basehist->Draw("");
+
+  setPlotStyleAsymm(  pu200_eff_timingCutT6,       color5,            3005,                 23);
+  pu200_eff_timingCutT6->Draw("P Same");
+
   
 //setPlotStyleAsymm(                  plot , Int_t  color, Int_t fillStyle,  Int_t MarkerStyle){
   setPlotStyleAsymm(  pu200_eff_timingCutT4,       color3,            3005,                 23);
@@ -144,6 +151,7 @@ void plotTimingFakes(){
   leg->AddEntry(pu200_eff_timingCutT2,"2#sigma Interval Tracks","PL");
   leg->AddEntry(pu200_eff_timingCutT3,"3#sigma Interval Tracks","PL");
   leg->AddEntry(pu200_eff_timingCutT4,"4#sigma Interval Tracks","PL");
+  leg->AddEntry(pu200_eff_timingCutT6,"6#sigma Interval Tracks","PL");
   leg->Draw();
   
   c1->SaveAs("~/Dropbox/"+date+"/TimingPlots/"+plotName+".pdf");
